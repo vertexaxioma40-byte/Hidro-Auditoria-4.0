@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERTEX AXIOMA® | Consorcio 4.0 — HidroAuditoría 4.0</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            cyan: '#06b6d4',
+                            blue: '#3b82f6',
+                            emerald: '#10b981',
+                            amber: '#f59e0b',
+                            rose: '#f43f5e',
+                            violet: '#8b5cf6'
+                        },
+                        cyber: {
+                            bg: '#060913',
+                            panel: '#0d1322',
+                            card: '#11192e',
+                            border: '#1e293b',
+                            highlight: '#1e2d4a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050811;
+            color: #e2e8f0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism panel style */
+        .glass-panel {
+            background: rgba(13, 19, 34, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-panel-active {
+            border-color: rgba(6, 182, 212, 0.45);
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.15);
+        }
+
+        .neon-glow-cyan {
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.35);
+        }
+
+        .neon-glow-blue {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.35);
+        }
+
+        .pulse-cyan {
+            animation: pulse-cyan-anim 2s infinite;
+        }
+        @keyframes pulse-cyan-anim {
+            0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(6, 182, 212, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+        }
+
+        .pulse-rose {
+            animation: pulse-rose-anim 1.5s infinite;
+        }
+        @keyframes pulse-rose-anim {
+            0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(244, 63, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050811; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-slate-950">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <!-- Brand & Module Badge -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-cyan-500/20">
+                    <i data-lucide="droplets" class="w-6 h-6 stroke-[2.5]"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-lg tracking-wider text-white">VERTEX AXIOMA<span class="text-cyan-400">®</span></span>
+                        <span class="bg-cyan-950/90 text-cyan-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-cyan-800/60 uppercase tracking-wider">CONSORCIO 4.0</span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-mono">HidroAuditoría 4.0 & Submedición IoT Espectral</p>
+                </div>
+            </div>
+
+            <!-- Building Context & Action Bar -->
+            <div class="flex items-center gap-3">
+                <div class="hidden md:flex items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800 text-xs">
+                    <i data-lucide="building" class="w-4 h-4 text-cyan-400"></i>
+                    <span class="font-medium text-slate-200">Torre Belgrano 2240</span>
+                    <span class="text-slate-500">|</span>
+                    <span class="font-mono text-emerald-400 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block pulse-cyan"></span> 12 UFs
+                    </span>
+                </div>
+
+                <button onclick="triggerGlobalHydroAudit()" class="px-3.5 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-xs font-semibold transition flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Auditar Balance Hídrico</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Selector de Modalidad Arquitectónica Dual -->
+        <div class="glass-panel rounded-2xl p-4 border border-slate-800">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">ARQUITECTURA ADAPTATIVA</span>
+                        <h2 class="text-base font-bold text-white">Modalidad de Medición Hídrica Consorcial</h2>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-0.5" id="modeDescriptionText">
+                        Visualizando arquitectura no invasiva para edificios tradicionales mediante sensores de abrazadera IoT y firma espectral de frecuencia/presión en columnas maestras.
+                    </p>
+                </div>
+
+                <!-- Mode Toggle Button Bar -->
+                <div class="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs font-medium self-start lg:self-auto">
+                    <button id="modeEspectralBtn" onclick="switchMode('espectral')" class="px-4 py-2 rounded-lg transition-all flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold shadow-lg shadow-cyan-900/40">
+                        <i data-lucide="waves" class="w-4 h-4"></i>
+                        <span>Modalidad Espectral (Abrazaderas IoT)</span>
+                    </button>
+                    <button id="modeDirectaBtn" onclick="switchMode('directa')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-slate-200 transition-all flex items-center gap-2">
+                        <i data-lucide="gauge" class="w-4 h-4"></i>
+                        <span>Modalidad Directa (Gabinete Técnico)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Metrics Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Gateway Maestro Vereda -->
+            <div class="glass-panel rounded-xl p-4 flex flex-col justify-between relative overflow-hidden">
+                <div class="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
+                    <span>CAUDAL MAESTRO VEREDA</span>
+                    <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between mt-1">
+                    <span id="masterFlowText" class="text-2xl font-black font-mono text-white tracking-tight">1,240 <span class="text-xs font-normal text-slate-400">L/h</span></span>
+                    <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                        ONLINE 100%
+                    </span>
+                </div>
+                <div class="mt-3 text-[11px] font-mono text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-2">
+                    <span>Acometida AySA: <strong class="text-slate-200">Ø 2"</strong></span>
+                    <span>Presión: <strong class="text-cyan-400">3.2 Bar</strong></span>
+                </div>
+            </div>
+
+            <!-- Tanque General de Reserva -->
+            <div class="glass-panel rounded-xl p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
+                    <span>TANQUE GENERAL RESERVA</span>
+                    <i data-lucide="container" class="w-4 h-4 text-blue-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between mt-1">
+                    <span id="tankLevelText" class="text-2xl font-black font-mono text-blue-400 tracking-tight">88.5%</span>
+                    <span class="text-[11px] font-mono text-slate-300">22,125 / 25,000 L</span>
+                </div>
+                <!-- Tank level visual bar -->
+                <div class="w-full bg-slate-900 rounded-full h-1.5 mt-2 border border-slate-800">
+                    <div id="tankProgressBar" class="bg-gradient-to-r from-blue-500 to-cyan-400 h-1.5 rounded-full transition-all duration-500" style="width: 88.5%;"></div>
+                </div>
+                <div class="mt-2 text-[11px] font-mono text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-1.5">
+                    <span>Sensor Ultrasónico:</span>
+                    <span class="text-emerald-400 font-bold">RFC-TNK-01 OK</span>
+                </div>
+            </div>
+
+            <!-- Balance Hídrico & Brecha -->
+            <div class="glass-panel rounded-xl p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
+                    <span>BALANCE DE CAUDAL / BRECHA</span>
+                    <i data-lucide="scale" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between mt-1">
+                    <span id="balanceGapText" class="text-xl font-bold font-mono text-emerald-400">0 L/h <span class="text-xs font-normal text-slate-400">(Sin Fuga)</span></span>
+                </div>
+                <div class="mt-2 text-[11px] font-mono text-slate-400 space-y-1">
+                    <div class="flex justify-between">
+                        <span>Sumatoria Unidades:</span>
+                        <span id="sumUnitsFlowText" class="text-slate-200 font-bold">1,240 L/h</span>
+                    </div>
+                    <div class="flex justify-between border-t border-slate-800/80 pt-1">
+                        <span>Pérdida en Estructura:</span>
+                        <span id="structuralLeakText" class="text-emerald-400 font-bold">0.00%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sello de Inmutabilidad & Ledger -->
+            <div class="glass-panel rounded-xl p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
+                    <span>INMUTABILIDAD FORENSE</span>
+                    <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between mt-1">
+                    <span class="text-base font-bold font-mono text-cyan-400 truncate">SHA256: 0x9F4...7C1</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">Gobernanza Cero-Humano activa. Firmas de agua petrificadas en Ledger.</p>
+                <div class="mt-2 text-[11px] font-mono text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-1.5">
+                    <span>Último Bloque:</span>
+                    <span class="text-cyan-400">#184,920</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Layout Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Main Column: Units Grid, Controls & Waveform Oscilloscope (7 Cols) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Unidades Funcionales Grid -->
+                <div class="glass-panel rounded-2xl p-5 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i data-lucide="layout-grid" class="w-5 h-5 text-cyan-400"></i>
+                                Mapeo de Unidades Funcionales
+                            </h3>
+                            <p class="text-xs text-slate-400">Seleccione un departamento para auditar su firma espectral o simular uso hídrico.</p>
+                        </div>
+                        <span class="text-xs font-mono bg-slate-900 text-cyan-400 px-3 py-1 rounded-lg border border-slate-800 self-start sm:self-auto" id="sensorHardwareBadge">
+                            Sensado Piezoeléctrico 42kHz
+                        </span>
+                    </div>
+
+                    <!-- UF Selector Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="unitsContainer">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Detail Panel for Selected Unit -->
+                <div class="glass-panel rounded-2xl p-5 space-y-5 border-l-4 border-l-cyan-500" id="unitDetailPanel">
+                    
+                    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <h3 class="text-2xl font-bold font-mono text-white" id="selectedUnitTitle">UF 01 — Dpto 1°A</h3>
+                                <span id="selectedUnitStatusBadge" class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-0.5 rounded-full border border-emerald-500/30 font-mono font-semibold">
+                                    FLUJO NORMAL
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1 flex items-center gap-2">
+                                <span>Código RFC: <strong class="text-slate-200 font-mono" id="selectedUnitRfc">RFC-H2O-1A-98C1</strong></span>
+                                <span>•</span>
+                                <span>Ubicación Cañería: <strong class="text-slate-300" id="selectedUnitLoc">Columna Central A-1</strong></span>
+                            </p>
+                        </div>
+
+                        <div class="text-right">
+                            <span class="text-xs text-slate-400 block">Caudal Instantáneo</span>
+                            <span class="text-2xl font-black font-mono text-cyan-400" id="selectedUnitFlow">340 L/h</span>
+                        </div>
+                    </div>
+
+                    <!-- Active Unit Controls & Hardware telemetry -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        
+                        <!-- Telemetry Specs Box -->
+                        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 space-y-2 text-xs font-mono">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Modo Hardware:</span>
+                                <span class="text-cyan-400 font-bold" id="detailHwMode">Abrazadera Piezo</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400" id="paramLabel1">Frecuencia Vibración:</span>
+                                <span class="text-white font-bold" id="paramValue1">42.4 kHz</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400" id="paramLabel2">Firma Transitorio ΔP:</span>
+                                <span class="text-white font-bold" id="paramValue2">0.24 Bar</span>
+                            </div>
+                            <div class="flex justify-between border-t border-slate-800/80 pt-2">
+                                <span class="text-slate-400">Acumulado Mes (Litros):</span>
+                                <span class="text-emerald-400 font-bold" id="selectedUnitMonthLiters">12,450 L</span>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Simulator Buttons -->
+                        <div class="flex flex-col justify-center gap-2">
+                            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="gamepad-2" class="w-3.5 h-3.5 text-cyan-400"></i>
+                                Simulación de Consumo en Vivo
+                            </span>
+                            
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="simulateUnitConsumption('shower')" class="px-2.5 py-2 rounded-lg bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-500/40 text-cyan-300 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                                    <i data-lucide="shower-head" class="w-3.5 h-3.5"></i> Abrir Ducha
+                                </button>
+
+                                <button onclick="simulateUnitConsumption('leak')" class="px-2.5 py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/40 text-amber-300 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                                    <i data-lucide="droplet-off" class="w-3.5 h-3.5"></i> Inodoro Trabado
+                                </button>
+                            </div>
+
+                            <button onclick="simulateUnitConsumption('stop')" class="w-full py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                                <i data-lucide="square" class="w-3.5 h-3.5 text-rose-400"></i> Cerrar Canillas (Cero Consumo)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Visualizador de Osciloscopio / Firma Acústica en Vivo -->
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                                <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i>
+                                Osciloscopio Digital de Firma Espectral / Presión en Vivo
+                            </h4>
+                            <span class="text-[10px] font-mono text-cyan-400 animate-pulse flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> SAMPLING: 100 Hz
+                            </span>
+                        </div>
+
+                        <!-- Canvas Container -->
+                        <div class="h-36 w-full rounded-xl bg-slate-950 border border-slate-800 relative overflow-hidden p-1">
+                            <canvas id="oscilloscopeCanvas" class="w-full h-full block"></canvas>
+                            <!-- Overlay info -->
+                            <div class="absolute top-2 left-3 text-[10px] font-mono text-slate-500 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800">
+                                SIGNAL NOISE RATIO: <span class="text-emerald-400 font-bold">48 dB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Right Column: Nocturnal Leak Test, Smart-Settle Engine & Cryptographic Ledger (5 Cols) -->
+            <div class="lg:col-span-5 space-y-6">
+
+                <!-- MODULO: Test Nocturno de Estanqueidad (Zero-Leak Test) -->
+                <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-amber-500 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                <i data-lucide="moon" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Test Nocturno de Estanqueidad</h3>
+                                <p class="text-xs text-slate-400">Auditoría automática de fuga estructural (03:00 - 05:00 AM)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Evalúa la brecha de consumo residual en reposo. Si el Gateway Maestro de vereda registra caudal continuo mientras las firmas espectrales de las UFs están inactivas, detecta pérdidas en tanques o cañerías maestras empotradas.
+                    </p>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-xs space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Estado Diagnóstico:</span>
+                            <span id="nocturnalStatus" class="text-emerald-400 font-bold">✓ SIN FUGAS MAESTRAS</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Caudal Parásito Medido:</span>
+                            <span id="nocturnalFlow" class="text-white font-bold">0.00 L/h</span>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="runNocturnalLeakTest(false)" class="flex-1 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="play" class="w-3.5 h-3.5"></i> Test de Red Normal
+                        </button>
+                        <button onclick="runNocturnalLeakTest(true)" class="flex-1 py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/40 text-amber-300 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Simular Fuga Oculta
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MODULO: Motor Smart-Settle Hídrico (Justicia Distributiva) -->
+                <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-cyan-500 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                <i data-lucide="calculator" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Smart-Settle Hídrico (Justicia Distributiva)</h3>
+                                <p class="text-xs text-slate-400">Comparativa: Prorrateo m² tradicional vs. Litros Reales</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Contraste automatizado sobre la factura global de agua ($240,000 ARS). Demuestra cómo el modelo 4.0 elimina el subsidio involuntario de personas solas a unidades con consumos masivos.
+                    </p>
+
+                    <!-- Comparison Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-[11px] font-mono">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-slate-400">
+                                    <th class="py-2 px-1">UF</th>
+                                    <th class="py-2 px-1">Coeff m²</th>
+                                    <th class="py-2 px-1">Litros</th>
+                                    <th class="py-2 px-1">Tradicional</th>
+                                    <th class="py-2 px-1 text-cyan-400">Hidro 4.0</th>
+                                    <th class="py-2 px-1 text-right">Ajuste</th>
+                                </tr>
+                            </thead>
+                            <tbody id="settlementTableBody" class="divide-y divide-slate-800/60">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-cyan-950/40 border border-cyan-500/30 p-3 rounded-xl flex items-center justify-between text-xs">
+                        <div>
+                            <span class="text-[10px] text-cyan-400 font-bold uppercase block">Justicia Consorcial</span>
+                            <span class="text-slate-200">Ahorro promedio UF monoparental: <strong class="text-emerald-400">$19,200 ARS/mes</strong></span>
+                        </div>
+                        <button onclick="openEvidenceModal()" class="px-2.5 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg text-xs transition flex items-center gap-1">
+                            <i data-lucide="file-check" class="w-3.5 h-3.5"></i> Acta
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MODULO: Consola de Logs Criptográficos y Prueba Petrificada -->
+                <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-violet-500 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="terminal" class="w-4 h-4 text-violet-400"></i>
+                            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Ledger Forense de Inmutabilidad Hídrica</h3>
+                        </div>
+                        <span class="text-[10px] font-mono text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded border border-violet-500/30">
+                            SELLO TRANSFRONTERIZO
+                        </span>
+                    </div>
+
+                    <!-- Scrollable Log Box -->
+                    <div id="cryptoLogConsole" class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[10px] h-36 overflow-y-auto space-y-1.5">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal for Evidence Act / Certificate -->
+    <div id="evidenceModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+        <div class="glass-panel max-w-xl w-full rounded-2xl p-6 border border-cyan-500/40 shadow-2xl relative space-y-4">
+            <button onclick="closeEvidenceModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                <div class="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                    <i data-lucide="award" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Acta Forense de HidroAuditoría 4.0</h3>
+                    <p class="text-xs text-slate-400 font-mono">Certificado de Balance y Distribución Cero-Humana</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-300 font-mono bg-slate-950 p-4 rounded-xl border border-slate-800 max-h-80 overflow-y-auto">
+                <p class="text-cyan-400 font-bold">[ REGISTRO INMUTABLE CONSTITUCIÓN AXIOMA® ]</p>
+                <p>Consorcio: Torre Belgrano 2240 (ID: CS-2240-BA)</p>
+                <p>Gateway Maestro ID: GW-HYD-BELGRANO-01</p>
+                <p>Modalidad Activa: <span id="modalModeText" class="text-emerald-400">Modalidad Espectral (Sensores Piezoeléctricos)</span></p>
+                <hr class="border-slate-800">
+                <p class="text-slate-400">RESUMEN DE AUDITORÍA DE CAUDAL:</p>
+                <p>• Caudal Maestro Vereda: <span class="text-white">1,240 L/h</span></p>
+                <p>• Sumatoria Submediciones: <span class="text-white">1,240 L/h</span></p>
+                <p>• Pérdida en Estructura Edificio: <span class="text-emerald-400">0.00% (Verificado)</span></p>
+                <hr class="border-slate-800">
+                <p class="text-violet-400">SELLO DE INMUTABILIDAD TRANSFRONTERIZA:</p>
+                <p class="text-[10px] text-slate-500 break-all">Hash SHA256: 7f8a9213bc01e4a5099d8b724cc6102ef19a8712a4b321e09f876aa123bde459</p>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button onclick="closeEvidenceModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg">Cerrar</button>
+                <button onclick="downloadPdfProof()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold rounded-lg flex items-center gap-2">
+                    <i data-lucide="download" class="w-4 h-4"></i> Descargar Acta Firmada (.PDF)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Section -->
+    <script>
+        // System Data & State
+        let currentMode = 'espectral'; // 'espectral' or 'directa'
+        let selectedUnitId = 'UF01';
+
+        // Functional Units Data
+        const unitsData = [
+            { id: 'UF01', name: '1°A', owner: 'Marta Soler', rfc: 'RFC-H2O-1A-98C1', m2Ratio: 0.18, flow: 340, monthLiters: 12450, freq: '42.4 kHz', pressure: '0.24 Bar', loc: 'Columna Central A-1' },
+            { id: 'UF02', name: '1°B', owner: 'Familia Rossi (4 hab)', rfc: 'RFC-H2O-1B-44A2', m2Ratio: 0.18, flow: 520, monthLiters: 28900, freq: '48.1 kHz', pressure: '0.38 Bar', loc: 'Columna Central B-1' },
+            { id: 'UF03', name: '2°A', owner: 'Carlos Giménez', rfc: 'RFC-H2O-2A-11B9', m2Ratio: 0.16, flow: 0, monthLiters: 8200, freq: '0.0 kHz', pressure: '0.00 Bar', loc: 'Columna Central A-2' },
+            { id: 'UF04', name: '2°B', owner: 'Lucía Fernández', rfc: 'RFC-H2O-2B-77C4', m2Ratio: 0.16, flow: 180, monthLiters: 11400, freq: '38.2 kHz', pressure: '0.15 Bar', loc: 'Columna Central B-2' },
+            { id: 'UF05', name: '3°A', owner: 'Gonzalo Prado', rfc: 'RFC-H2O-3A-33D8', m2Ratio: 0.16, flow: 200, monthLiters: 14100, freq: '39.8 kHz', pressure: '0.18 Bar', loc: 'Columna Central A-3' },
+            { id: 'UF06', name: '3°B', owner: 'Estudio Arquitectura', rfc: 'RFC-H2O-3B-99E5', m2Ratio: 0.16, flow: 0, monthLiters: 6500, freq: '0.0 kHz', pressure: '0.00 Bar', loc: 'Columna Central B-3' }
+        ];
+
+        // Total Building Water Bill (ARS)
+        const TOTAL_WATER_BILL_ARS = 240000;
+
+        // Oscilloscope Animation Variables
+        let animFrameId = null;
+        let canvas, ctx;
+        let wavePhase = 0;
+
+        // Initialize on DOM Load
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initOscilloscope();
+            renderUnitsGrid();
+            selectUnit('UF01');
+            updateOverallBalance();
+            renderSmartSettleTable();
+            addCryptoLogEntry('INICIO: Sistema HidroAuditoría 4.0 inicializado. Sensado activo.');
+        });
+
+        // Switch Architectural Mode (Espectral vs Directa)
+        function switchMode(mode) {
+            currentMode = mode;
+
+            const espectralBtn = document.getElementById('modeEspectralBtn');
+            const directaBtn = document.getElementById('modeDirectaBtn');
+            const descText = document.getElementById('modeDescriptionText');
+            const badgeHw = document.getElementById('sensorHardwareBadge');
+
+            if (mode === 'espectral') {
+                espectralBtn.className = 'px-4 py-2 rounded-lg transition-all flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold shadow-lg shadow-cyan-900/40';
+                directaBtn.className = 'px-4 py-2 rounded-lg text-slate-400 hover:text-slate-200 transition-all flex items-center gap-2';
+                descText.innerText = 'Visualizando arquitectura no invasiva para edificios tradicionales mediante sensores de abrazadera IoT y firma espectral de frecuencia/presión en columnas maestras.';
+                badgeHw.innerText = 'Sensado Piezoeléctrico 42kHz';
+                document.getElementById('modalModeText').innerText = 'Modalidad Espectral (Sensores Piezoeléctricos)';
+            } else {
+                directaBtn.className = 'px-4 py-2 rounded-lg transition-all flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold shadow-lg shadow-blue-900/40';
+                espectralBtn.className = 'px-4 py-2 rounded-lg text-slate-400 hover:text-slate-200 transition-all flex items-center gap-2';
+                descText.innerText = 'Visualizando arquitectura directa para edificios con gabinete técnico accesible. Telemetría por submedidores ultrasónicos individuales en cada entrada.';
+                badgeHw.innerText = 'Submedidor Ultrasónico Directo';
+                document.getElementById('modalModeText').innerText = 'Modalidad Directa (Gabinete Técnico Individual)';
+            }
+
+            // Refresh UI detail labels
+            selectUnit(selectedUnitId);
+            addCryptoLogEntry(`MODO CAMBIADO: Arquitectura ajustada a '${mode.toUpperCase()}'. Re-sincronizando parámetros.`);
+        }
+
+        // Render Units Selector Buttons
+        function renderUnitsGrid() {
+            const container = document.getElementById('unitsContainer');
+            container.innerHTML = '';
+
+            unitsData.forEach(unit => {
+                const card = document.createElement('div');
+                card.id = `unit-card-${unit.id}`;
+                card.onclick = () => selectUnit(unit.id);
+                card.className = `p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
+                    unit.id === selectedUnitId
+                    ? 'bg-cyan-950/40 border-cyan-400 text-white shadow-lg shadow-cyan-950/50'
+                    : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold font-mono text-white">${unit.name}</span>
+                        <span class="w-2 h-2 rounded-full ${unit.flow > 0 ? 'bg-cyan-400 pulse-cyan' : 'bg-slate-600'}"></span>
+                    </div>
+                    <div class="mt-2 text-right">
+                        <span class="text-sm font-black font-mono ${unit.flow > 0 ? 'text-cyan-400' : 'text-slate-500'}">${unit.flow} L/h</span>
+                    </div>
+                    <div class="mt-1 text-[10px] text-slate-500 font-mono border-t border-slate-800/60 pt-1 flex justify-between">
+                        <span>RFC:</span>
+                        <span class="text-slate-400 truncate max-w-[80px]">${unit.rfc.split('-')[2]}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Select Active Unit and Update View
+        function selectUnit(unitId) {
+            selectedUnitId = unitId;
+            const unit = unitsData.find(u => u.id === unitId);
+
+            // Update Cards Highlight
+            unitsData.forEach(u => {
+                const el = document.getElementById(`unit-card-${u.id}`);
+                if (el) {
+                    if (u.id === unitId) {
+                        el.className = 'p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between bg-cyan-950/40 border-cyan-400 text-white shadow-lg shadow-cyan-950/50';
+                    } else {
+                        el.className = 'p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between bg-slate-900/60 border-slate-800/80 text-slate-400 hover:border-slate-700 hover:text-slate-200';
+                    }
+                }
+            });
+
+            // Update Detail Box
+            document.getElementById('selectedUnitTitle').innerText = `UF ${unit.id.replace('UF','')} — Dpto ${unit.name}`;
+            document.getElementById('selectedUnitRfc').innerText = unit.rfc;
+            document.getElementById('selectedUnitLoc').innerText = unit.loc;
+            document.getElementById('selectedUnitFlow').innerText = `${unit.flow} L/h`;
+            document.getElementById('selectedUnitMonthLiters').innerText = `${unit.monthLiters.toLocaleString()} L`;
+
+            const badge = document.getElementById('selectedUnitStatusBadge');
+            if (unit.flow > 400) {
+                badge.innerText = 'ALTO CONSUMO';
+                badge.className = 'bg-amber-500/20 text-amber-300 text-xs px-2.5 py-0.5 rounded-full border border-amber-500/30 font-mono font-semibold';
+            } else if (unit.flow > 0) {
+                badge.innerText = 'FLUJO NORMAL';
+                badge.className = 'bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-0.5 rounded-full border border-emerald-500/30 font-mono font-semibold';
+            } else {
+                badge.innerText = 'REPOSO (0 L/h)';
+                badge.className = 'bg-slate-800 text-slate-400 text-xs px-2.5 py-0.5 rounded-full border border-slate-700 font-mono font-semibold';
+            }
+
+            // Mode labels update
+            if (currentMode === 'espectral') {
+                document.getElementById('detailHwMode').innerText = 'Abrazadera Piezo';
+                document.getElementById('paramLabel1').innerText = 'Frecuencia Vibración:';
+                document.getElementById('paramValue1').innerText = unit.flow > 0 ? unit.freq : '0.0 kHz';
+                document.getElementById('paramLabel2').innerText = 'Firma Transitorio ΔP:';
+                document.getElementById('paramValue2').innerText = unit.flow > 0 ? unit.pressure : '0.00 Bar';
+            } else {
+                document.getElementById('detailHwMode').innerText = 'Medidor Ultrasónico';
+                document.getElementById('paramLabel1').innerText = 'Pulso Ultrasónico:';
+                document.getElementById('paramValue1').innerText = unit.flow > 0 ? '1,024 Imp/L' : '0 Imp/L';
+                document.getElementById('paramLabel2').innerText = 'Batería Telemetría:';
+                document.getElementById('paramValue2').innerText = '98% (Li-SoCl2)';
+            }
+        }
+
+        // Simulate Unit Flow Actions
+        function simulateUnitConsumption(action) {
+            const unit = unitsData.find(u => u.id === selectedUnitId);
+
+            if (action === 'shower') {
+                unit.flow = 480;
+                unit.freq = '46.8 kHz';
+                unit.pressure = '0.34 Bar';
+                addCryptoLogEntry(`SIMULACIÓN: Apertura de grifo/ducha en ${unit.name} (${unit.flow} L/h). Firma generada.`);
+            } else if (action === 'leak') {
+                unit.flow = 120;
+                unit.freq = '24.1 kHz';
+                unit.pressure = '0.09 Bar';
+                addCryptoLogEntry(`ALERTA: Simulación de goteo/inodoro trabado en ${unit.name} (${unit.flow} L/h).`);
+            } else if (action === 'stop') {
+                unit.flow = 0;
+                unit.freq = '0.0 kHz';
+                unit.pressure = '0.00 Bar';
+                addCryptoLogEntry(`CORTES: Flujo detenido en ${unit.name}. Estado reposo verificado.`);
+            }
+
+            renderUnitsGrid();
+            selectUnit(selectedUnitId);
+            updateOverallBalance();
+            renderSmartSettleTable();
+        }
+
+        // Recalculate Building Master Balance
+        function updateOverallBalance() {
+            const sumUnitsFlow = unitsData.reduce((acc, u) => acc + u.flow, 0);
+            
+            // Structural leak baseline
+            const structuralLeak = 0; 
+            const masterFlow = sumUnitsFlow + structuralLeak;
+
+            document.getElementById('sumUnitsFlowText').innerText = `${sumUnitsFlow} L/h`;
+            document.getElementById('masterFlowText').innerHTML = `${masterFlow} <span class="text-xs font-normal text-slate-400">L/h</span>`;
+
+            const gapText = document.getElementById('balanceGapText');
+            const leakText = document.getElementById('structuralLeakText');
+
+            if (structuralLeak === 0) {
+                gapText.innerText = '0 L/h (Sin Fuga)';
+                gapText.className = 'text-xl font-bold font-mono text-emerald-400';
+                leakText.innerText = '0.00%';
+                leakText.className = 'text-emerald-400 font-bold';
+            } else {
+                gapText.innerText = `${structuralLeak} L/h (ANOMALÍA)`;
+                gapText.className = 'text-xl font-bold font-mono text-rose-400 animate-pulse';
+                leakText.innerText = `${((structuralLeak / masterFlow) * 100).toFixed(1)}%`;
+                leakText.className = 'text-rose-400 font-bold';
+            }
+        }
+
+        // Render Smart-Settle Table
+        function renderSmartSettleTable() {
+            const tbody = document.getElementById('settlementTableBody');
+            tbody.innerHTML = '';
+
+            const totalMonthLiters = unitsData.reduce((acc, u) => acc + u.monthLiters, 0);
+
+            unitsData.forEach(u => {
+                // Traditional calculation: prorated by m²
+                const traditionalCost = TOTAL_WATER_BILL_ARS * u.m2Ratio;
+
+                // Hidro 4.0 calculation: 20% Base Common Area + 80% Variable Liters
+                const commonAreaBase = (TOTAL_WATER_BILL_ARS * 0.20) / unitsData.length;
+                const variableHydroCost = (TOTAL_WATER_BILL_ARS * 0.80) * (u.monthLiters / totalMonthLiters);
+                const hydroCost = commonAreaBase + variableHydroCost;
+
+                const diff = hydroCost - traditionalCost;
+                const diffFormatted = diff > 0 
+                    ? `+$${Math.abs(diff).toLocaleString('es-AR', {maximumFractionDigits:0})}`
+                    : `-$${Math.abs(diff).toLocaleString('es-AR', {maximumFractionDigits:0})}`;
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-900/50 transition';
+                tr.innerHTML = `
+                    <td class="py-2 px-1 font-bold text-white">${u.name}</td>
+                    <td class="py-2 px-1 text-slate-400">${(u.m2Ratio * 100).toFixed(0)}%</td>
+                    <td class="py-2 px-1 text-slate-300">${u.monthLiters.toLocaleString()} L</td>
+                    <td class="py-2 px-1 text-slate-400">$${traditionalCost.toLocaleString('es-AR', {maximumFractionDigits:0})}</td>
+                    <td class="py-2 px-1 font-bold text-cyan-400">$${hydroCost.toLocaleString('es-AR', {maximumFractionDigits:0})}</td>
+                    <td class="py-2 px-1 text-right font-bold ${diff < 0 ? 'text-emerald-400' : 'text-amber-400'}">${diffFormatted}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Oscilloscope Canvas Animation Loop
+        function initOscilloscope() {
+            canvas = document.getElementById('oscilloscopeCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Set internal resolution
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            window.addEventListener('resize', () => {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            });
+
+            animateOscilloscope();
+        }
+
+        function animateOscilloscope() {
+            ctx.fillStyle = '#050811';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(30, 41, 59, 0.4)';
+            ctx.lineWidth = 1;
+            const gridStep = 20;
+
+            for (let x = 0; x < canvas.width; x += gridStep) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += gridStep) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Waveform parameters based on selected unit
+            const unit = unitsData.find(u => u.id === selectedUnitId);
+            const isFlowing = unit && unit.flow > 0;
+            const amplitude = isFlowing ? Math.min(canvas.height / 2.5, unit.flow / 12) : 2;
+
+            // Draw primary cyan waveform
+            ctx.beginPath();
+            ctx.lineWidth = isFlowing ? 2 : 1.5;
+            ctx.strokeStyle = isFlowing ? '#06b6d4' : '#334155';
+
+            const centerY = canvas.height / 2;
+            wavePhase += isFlowing ? 0.12 : 0.02;
+
+            for (let x = 0; x < canvas.width; x++) {
+                const freq = isFlowing ? 0.04 : 0.01;
+                const noise = isFlowing ? (Math.random() - 0.5) * 4 : (Math.random() - 0.5) * 1.5;
+                const y = centerY + Math.sin(x * freq + wavePhase) * amplitude + noise;
+
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Draw secondary frequency overlay if flow exists
+            if (isFlowing) {
+                ctx.beginPath();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
+                for (let x = 0; x < canvas.width; x++) {
+                    const y = centerY + Math.cos(x * 0.08 - wavePhase * 1.5) * (amplitude * 0.5);
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            animFrameId = requestAnimationFrame(animateOscilloscope);
+        }
+
+        // Run Nocturnal Leak Test Simulation
+        function runNocturnalLeakTest(simulateLeak) {
+            const statusEl = document.getElementById('nocturnalStatus');
+            const flowEl = document.getElementById('nocturnalFlow');
+
+            if (!simulateLeak) {
+                statusEl.innerText = '✓ SIN FUGAS MAESTRAS';
+                statusEl.className = 'text-emerald-400 font-bold';
+                flowEl.innerText = '0.00 L/h';
+                addCryptoLogEntry('TEST NOCTURNO: Inspección de estanqueidad completada. Red 100% integra.');
+            } else {
+                statusEl.innerText = '⚠️ ALERTA DE FUGA STRUCTURAL';
+                statusEl.className = 'text-rose-400 font-bold animate-pulse';
+                flowEl.innerText = '145.50 L/h [Fuga Nocturna]';
+                addCryptoLogEntry('CRÍTICO: Detección de flujo maestro continuo nocturno (145.5 L/h) sin consumo en UFs. Fuga oculta detectada.');
+            }
+        }
+
+        // Add Entry to Crypto Log Console
+        function addCryptoLogEntry(message) {
+            const consoleBox = document.getElementById('cryptoLogConsole');
+            const timestamp = new Date().toLocaleTimeString();
+            const fakeHash = '0x' + Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join('');
+
+            const entry = document.createElement('div');
+            entry.className = 'text-slate-300 flex items-start gap-1 text-[10px] border-b border-slate-900/60 pb-1';
+            entry.innerHTML = `
+                <span class="text-slate-500 font-mono">[${timestamp}]</span>
+                <span class="text-cyan-400 font-mono">[${fakeHash}]</span>
+                <span class="flex-1">${message}</span>
+            `;
+            consoleBox.prepend(entry);
+        }
+
+        // Modal Triggers
+        function openEvidenceModal() {
+            document.getElementById('evidenceModal').classList.remove('hidden');
+            document.getElementById('evidenceModal').classList.add('flex');
+        }
+
+        function closeEvidenceModal() {
+            document.getElementById('evidenceModal').classList.add('hidden');
+            document.getElementById('evidenceModal').classList.remove('flex');
+        }
+
+        function downloadPdfProof() {
+            addCryptoLogEntry('EXPORTACION: Documento digital de evidencia con Sello Transfronterizo generado.');
+            closeEvidenceModal();
+        }
+
+        function triggerGlobalHydroAudit() {
+            addCryptoLogEntry('AUDITORÍA GLOBAL: Balance maestro de caudales y frecuencias ejecutado. 12 UFs re-validadas.');
+        }
+    </script>
+</body>
+</html>
